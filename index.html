@@ -136,20 +136,34 @@
         </div>
         <div class="row justify-content-center">
           <div class="col-md-6">
-        <form>
+            <div class="alert alert-success d-flex align-items-center my-alert d-none" role="alert">
+              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                <use xlink:href="#check-circle-fill"/>
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+              </svg>
+              <div>
+                Thanks! Your Message has been sended successfully
+              </div>
+            </div>
+        <form name="submit-gsheet">
           <div class="mb-3">
               <label for="name" class="form-label">Full Name</label>
-              <input type="text" class="form-control" id="name" >
+              <input name="name" type="text" class="form-control" id="name" >
             </div>
           <div class="mb-3">
-              <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" placeholder="name@example.com">
+              <label for="email" class="form-label ">Email address</label>
+            <input name="email" type="email" class="form-control" id="email" placeholder="name@example.com">
             </div>
             <div class="mb-3">
-              <label for="message" class="form-label">Message</label>
-              <textarea class="form-control" id="message" rows="3"></textarea>
+              <label for="message" class="form-label" >Message</label>
+              <textarea name="message" class="form-control" id="message" rows="3" ></textarea>
             </div>
-            <button type="message" class="btn btn-info text-white">Send</button>
+            <button type="submit" class="btn btn-primary text-white btn-send">Send</button>
+
+            <button class="btn btn-primary btn-loading d-none" type="button" disabled>
+              <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </button>
           </form>
         </div>
       </div>
@@ -165,5 +179,31 @@
   </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    
+    <script>
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbzcoklNoYS7o6fPrexx0DiP10BRJw_p3r96jGzLLJ2fTr5k0gFzTrp-YH7C1aTWMCVt/exec';
+      const form = document.forms['submit-gsheet'];
+      const btnSend = document.querySelector('.btn-send');
+      const btnLoading = document.querySelector('.btn-loading');
+      const Alert = document.querySelector('.my-alert');
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+
+        //show to hide button
+        btnLoading.classList.toggle('d-none');
+        btnSend.classList.toggle('d-none');
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+          .then((response) => {
+            btnLoading.classList.toggle('d-none');
+            btnSend.classList.toggle('d-none');
+            Alert.classList.toggle('d-none');
+            
+            form.reset();
+            console.log('Success!', response);
+          })
+          .catch((error) => console.error('Error!', error.message));
+      });
+    </script>
   </body>
 </html>
